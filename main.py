@@ -41,7 +41,8 @@ def run(orderbooks, lock):
                     print(f"{'-'*20} {'-'*10} {'-'*10} {'-'*10}")
                     for exchange in orderbooks['exchanges']:
                         print(f"{str(exchange):<20} {orderbooks['exchanges'][exchange]['bids']:<10} {orderbooks['exchanges'][exchange]['asks']:<10} {orderbooks['exchanges'][exchange]['price']:<10}")
-                    print(f"Last update: {orderbooks['last_update']}\n")
+                    print(f"last update:", orderbooks['last_update'])
+                    print(f"{'-'*53}")   
                     
 
 
@@ -55,8 +56,7 @@ def run(orderbooks, lock):
 if __name__ == "__main__":
     # data management
     lock = threading.Lock()
-    orderbooks = {"exchanges":
-                        {"Coinbase": {}},
+    orderbooks = {"exchanges": {"Coinbase": {}},
                     "last_update": None,
                 }
 
@@ -67,6 +67,7 @@ if __name__ == "__main__":
         orderbook=orderbooks,
         lock=lock,
     )
+
 
     # start threads
     coinbase.start()
