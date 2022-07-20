@@ -70,39 +70,20 @@ if __name__ == "__main__":
     # data management
     lock = threading.Lock()
     orderbooks = {
-        "Binance": {},
-        "Huobi": {},
-        "Upbit": {},
+        "Coinbase": {},
         "last_update": None,
     }
 
     # create websocket threads
-    binance = Binance(
-        url="wss://stream.binance.com:9443/ws/steembtc@depth",
-        exchange="Binance",
+    coinbase = Coinbase(
+        url="wss://ws-feed.exchange.coinbase.com",
+        exchange="Coinbase",
         orderbook=orderbooks,
         lock=lock,
     )
-
-    huobi = Huobi(
-        url="wss://api.huobipro.com/ws",
-        exchange="Huobi",
-        orderbook=orderbooks,
-        lock=lock,
-    )
-
-    upbit = Upbit(
-        url="wss://api.hitbtc.com/api/2/ws",
-        exchange="Upbit",
-        orderbook=orderbooks,
-        lock=lock,
-    )
-
 
     # start threads
-    binance.start()
-    huobi.start()
-    upbit.start()
+    coinbase.start()
 
     # process websocket data
     run(orderbooks, lock)

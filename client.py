@@ -29,8 +29,8 @@ class Client(threading.Thread):
         pass
 
     # catch errors
-    def on_error(self, error):
-        print(error)
+    def on_error(self, error, message):
+        print(error, message)
 
     # run when websocket is closed
     def on_close(self):
