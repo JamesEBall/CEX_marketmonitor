@@ -8,31 +8,14 @@ import threading
 import time
 
 
-# calculate absolute delta in percentage
-def delta(v1, v2):
-    return abs((v2-v1)/v1)*100
 
-
-# retrieve top bid/ask for each exchange
-# calculate deltas
-def calculate_price_delta(orderbooks, ex1, ex2):
-    bid1 = float(orderbooks[ex1]['bids'][0][0])
-    bid2 = float(orderbooks[ex2]['bids'][0][0])
-
-    ask1 = float(orderbooks[ex1]['asks'][0][0])
-    ask2 = float(orderbooks[ex2]['asks'][0][0])
-
-    bid = delta(bid1, bid2)
-    ask = delta(ask1, ask2)
-
-    print(f'{ex1}-{ex2}\tBID Δ: {bid:.2f}% ASK Δ: {ask:.2f}%')
 
 # return subsets of size 2 of all exchanges
 def exchange_sets(orderbooks):
     exchanges = []
 
     # extract exchanges
-    for exchange in orderbooks:
+    for exchange in orderbooks['exchanges']:
         if exchange != 'last_update':
             exchanges.append(exchange)
 
@@ -51,17 +34,20 @@ def run(orderbooks, lock):
     while True:
         try:
             # check for new update
-            if orderbooks['last_update'] != current_time:
+            if orderbooks['last_update'] != current_time and orderbooks['last_update'] != None:
                 with lock:
                     # extract and print data
-                    for exchanges in sets:
-                        ex1, ex2 = exchanges
-                        calculate_price_delta(orderbooks, ex1, ex2)
+                    print(f"{'Exchange':<20} {'Bid':<10} {'Ask':<10} {'Price':<10}")
+                    print(f"{'-'*20} {'-'*10} {'-'*10} {'-'*10}")
+                    for exchange in orderbooks['exchanges']:
+                        print(f"{str(exchange):<20} {orderbooks['exchanges'][exchange]['bids']:<10} {orderbooks['exchanges'][exchange]['asks']:<10} {orderbooks['exchanges'][exchange]['price']:<10}")
                     print(f"Last update: {orderbooks['last_update']}\n")
+                    
+
 
                     # set local last_update to last_update
                     current_time = orderbooks['last_update']
-            time.sleep(0.1)
+            time.sleep(.05)
         except Exception:
             pass
 
@@ -69,10 +55,10 @@ def run(orderbooks, lock):
 if __name__ == "__main__":
     # data management
     lock = threading.Lock()
-    orderbooks = {
-        "Coinbase": {},
-        "last_update": None,
-    }
+    orderbooks = {"exchanges":
+                        {"Coinbase": {}},
+                    "last_update": None,
+                }
 
     # create websocket threads
     coinbase = Coinbase(
