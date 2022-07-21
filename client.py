@@ -1,5 +1,4 @@
 import websocket
-import requests
 import threading
 
 from json import loads

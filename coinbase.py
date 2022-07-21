@@ -1,8 +1,11 @@
 from base64 import encode
 import json
+from tokenize import Ignore
+from tracemalloc import stop
 from client import Client
 from json import loads
 from datetime import datetime
+import csv
 
 
 # inherits from Client
@@ -20,19 +23,20 @@ class Coinbase(Client):
 
         data = json.loads(message)  # Load the JSON message sent
 
-        if 'sequence' in data:
+        # If the message is a snapshot, update the orderbook. If it did not recieve a snapshot, close.
+        if ('type', 'snapshot') in data.items():
             with self.lock:
-                self.orderbook['bids'] = data['best_bid']
-                self.orderbook['asks'] = data['best_ask']
-                self.orderbook['price'] = data['price']
-                self.orderbook['sequence'] = data['sequence']
-                self.last_update['last_update'] = datetime.now()
+                #records snapshot of orderbook
+                self.orderbook['type'] = data['type']
+                self.orderbook['pair'] = data['product_id']
+                self.orderbook['asks'] = data['asks'] #creates an orderbook from the snapshot.
+                self.orderbook['bids'] = data['bids']
+                self.orderbook['last_update'] = datetime.now()
+                stop
+        else:
+            stop        # Select the proper coin based on message type and pass the message to that object
 
 
-        # Select the proper coin based on message type and pass the message to that object
-
-        #testing output of result
-        #print (data)
 
 
     # convert dict to string, subscribe to data streem by sending message
@@ -44,7 +48,7 @@ class Coinbase(Client):
                         "ETH-USD"
                     ],
                     "channels": [
-                        "level2_bulk", #toggle to level2 to get the full orderbook or level2_bulk to get aggregated feed
+                        "level2", #toggle to level2 to get the full orderbook or level2_bulk to get aggregated feed
                         {
                             "name": "ticker",
                             "product_ids": [
