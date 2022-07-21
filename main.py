@@ -7,6 +7,7 @@ from itertools import combinations
 import threading
 import time
 
+import pandas as pd
 
 
 
@@ -30,28 +31,19 @@ def run(orderbooks, lock):
 
     # exchange subsets
     sets = exchange_sets(orderbooks)
-
+    
     while True:
         try:
-            # check for new update
-            if orderbooks['last_update'] != current_time and orderbooks['last_update'] != None:
-                with lock:
-                    # extract and print data
-                    print(f"{'Exchange':<20} {'Bid':<10} {'Ask':<10} {'Price':<10}")
-                    print(f"{'-'*20} {'-'*10} {'-'*10} {'-'*10}")
-                    for exchange in orderbooks['exchanges']:
-                        print(f"{str(exchange):<20} {orderbooks['exchanges'][exchange]['bids']:<10} {orderbooks['exchanges'][exchange]['asks']:<10} {orderbooks['exchanges'][exchange]['price']:<10}")
-                    print(f"last update:", orderbooks['last_update'])
-                    print(f"{'-'*53}")   
-                    
-
-
-                    # set local last_update to last_update
-                    current_time = orderbooks['last_update']
-            time.sleep(.05)
+            
+            with lock:
+                for exchange in orderbooks['exchanges']:
+                    pd.DataFrame.from_dict((orderbooks['exchanges'][exchange]['asks'])).to_csv(f'{exchange} asks.csv')
+                    pd.DataFrame.from_dict((orderbooks['exchanges'][exchange]['bids'])).to_csv(f'{exchange} bids.csv')
+                    print(f'{exchange} data written to file')
+            break
         except Exception:
             pass
-
+        time.sleep(1)
 
 if __name__ == "__main__":
     # data management
@@ -73,4 +65,6 @@ if __name__ == "__main__":
     coinbase.start()
 
     # process websocket data
+    # Code executed here
     run(orderbooks, lock)
+    
