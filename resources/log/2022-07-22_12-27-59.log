@@ -1,0 +1,37 @@
+ERROR:root:Uncaught exception: <class 'ValueError'>: x, y, and format string must not be None
+NoneType: None
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<main() done, defined at /opt/homebrew/lib/python3.9/site-packages/open_crypto/main.py:78> exception=SystemExit()>
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.9/site-packages/open_crypto/main.py", line 127, in main
+    loop.run_until_complete(await scheduler.start())
+  File "/opt/homebrew/lib/python3.9/site-packages/nest_asyncio.py", line 79, in run_until_complete
+    f = asyncio.ensure_future(future, loop=self)
+  File "/opt/homebrew/Cellar/python@3.9/3.9.13_1/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py", line 677, in ensure_future
+    raise TypeError('An asyncio.Future, a coroutine or an awaitable is '
+TypeError: An asyncio.Future, a coroutine or an awaitable is required
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/homebrew/lib/python3.9/site-packages/open_crypto/runner.py", line 216, in run
+    main.run(configuration_file, working_directory)
+  File "/opt/homebrew/lib/python3.9/site-packages/open_crypto/main.py", line 176, in run
+    asyncio.run(main(database_handler, program_config))
+  File "/opt/homebrew/lib/python3.9/site-packages/nest_asyncio.py", line 35, in run
+    return loop.run_until_complete(task)
+  File "/opt/homebrew/lib/python3.9/site-packages/nest_asyncio.py", line 83, in run_until_complete
+    self._run_once()
+  File "/opt/homebrew/lib/python3.9/site-packages/nest_asyncio.py", line 119, in _run_once
+    handle._run()
+  File "/opt/homebrew/Cellar/python@3.9/3.9.13_1/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/opt/homebrew/Cellar/python@3.9/3.9.13_1/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py", line 339, in __wakeup
+    self.__step()
+  File "/opt/homebrew/lib/python3.9/site-packages/nest_asyncio.py", line 195, in step
+    step_orig(task, exc)
+  File "/opt/homebrew/Cellar/python@3.9/3.9.13_1/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py", line 256, in __step
+    result = coro.send(None)
+  File "/opt/homebrew/lib/python3.9/site-packages/open_crypto/main.py", line 129, in main
+    raise SystemExit from exc
+SystemExit
